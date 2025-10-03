@@ -11,7 +11,10 @@ const logger = createLogger('Server');
 // Create Express app first
 const app = express();
 
-// Add CORS headers BEFORE setting up A2A routes
+/**
+ * Basic CORS middleware to allow cross-origin requests in dev setups.
+ * Adjust for your deployment/security needs.
+ */
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -31,6 +34,7 @@ app.use((req, res, next) => {
 new A2AExpressApp(basicAssistantRequestHandler).setupRoutes(app, '/agents/basicAssistant/a2a');
 new A2AExpressApp(metaAssistantRequestHandler).setupRoutes(app, '/agents/metaAssistant/a2a');
 
+// Start the server
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
   logger.info(`🚀 A2A Server Running on http://localhost:${port}`);

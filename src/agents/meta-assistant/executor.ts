@@ -12,9 +12,21 @@ export const tasksStore = new InMemoryTaskStore();
 const logger = createLogger('MetaAssistantExecutor');
 
 /**
- * Minimal executor that acknowledges the user message and completes the task.
+ * Minimal executor for the Meta Assistant sample.
+ *
+ * A2A Summary:
+ * - Publishes a `task` event on submission
+ * - Emits a short assistant `message` acknowledging the user input
+ * - Publishes a final `status-update` of `completed`
  */
 class MetaAssistantExecutor implements AgentExecutor {
+  /**
+   * Executes a single A2A task for this agent.
+   *
+   * Parameters
+   * - requestContext: includes `taskId`, `contextId`, and the user `message`
+   * - eventBus: streaming channel used to publish task, message, and status events
+   */
   async execute(requestContext: RequestContext, eventBus: ExecutionEventBus): Promise<void> {
     const { taskId, contextId, userMessage } = requestContext;
 
@@ -53,6 +65,12 @@ class MetaAssistantExecutor implements AgentExecutor {
     eventBus.finished();
   }
 
+  /**
+   * Attempts to cancel a running task.
+   *
+   * Note: This sample does not implement cancellation. Real agents should
+   * persist state and signal their workers to stop if possible.
+   */
   async cancelTask(taskId: string, _eventBus: ExecutionEventBus): Promise<void> {
     logger.warn({ taskId }, 'Cancel not implemented');
     throw new Error('Not implemented');

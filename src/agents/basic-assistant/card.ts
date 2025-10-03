@@ -1,7 +1,12 @@
 import { AgentCard } from '@a2a-js/sdk';
 
 /**
- * Card metadata for a simple echo assistant sample agent.
+ * AgentCard: advertises this agent's capabilities for discovery.
+ *
+ * Key fields (A2A):
+ * - `url`: base route where the A2A endpoints are exposed
+ * - `skills`: human-readable capabilities for marketplaces/directories
+ * - `capabilities`: transport features like streaming or push notifications
  */
 export const basicAssistantCard: AgentCard = {
   name: 'Basic Assistant (Sample)',
