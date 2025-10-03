@@ -1,31 +1,38 @@
-import pino from "pino";
+import pino from 'pino';
 
 /**
- * Creates a namespaced pino logger instance.
- * Use this to generate module-specific loggers.
+ * Creates a namespaced pino logger instance (Pino v10-compatible).
+ * In development, logs are prettified using `pino-pretty`. In production, logs go to stdout.
  */
 export function createLogger(moduleName: string) {
-  const isDev = process.env.NODE_ENV !== "production";
+  const isDev = process.env.NODE_ENV !== 'production';
+  const level = process.env.LOG_LEVEL || (isDev ? 'debug' : 'info');
+
+  // Use pino-pretty only in development to avoid overhead in production
   const transport = isDev
-    ? {
-        target: "pino-pretty",
-        options: { colorize: true, translateTime: "SYS:standard" }
-      }
+    ? pino.transport({
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:standard',
+          singleLine: false,
+        },
+      })
     : undefined;
 
-  // Add module name as base binding for easy filtering
+  // Bind module name for easy filtering in logs
   return pino(
     {
-      level: process.env.LOG_LEVEL || (isDev ? "debug" : "info"),
-      base: { module: moduleName }
+      level,
+      base: { module: moduleName },
     },
-    transport as any
+    transport,
   );
 }
 
 /**
- * Returns a default logger (module name: App)
+ * Returns a default logger (module name: App).
  */
 export function getLogger() {
-  return createLogger("App");
+  return createLogger('App');
 }
